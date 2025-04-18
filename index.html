@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      ZephyrFormValidator - Lightweight JavaScript Form Validation Library
+    </title>
+    <!-- Bootstrap 5 CSS -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Bootstrap Icons -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.5/font/bootstrap-icons.min.css"
+      rel="stylesheet"
+    />
+    <!-- Custom Styles -->
+    <style>
+      :root {
+        --primary: #4361ee;
+        --secondary: #3f37c9;
+        --accent: #4cc9f0;
+        --light: #f8f9fa;
+        --dark: #212529;
+      }
+      .hero-gradient {
+        background: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        color: white;
+      }
+      .feature-icon {
+        font-size: 2rem;
+        color: var(--primary);
+      }
+      .navbar-brand {
+        font-weight: 700;
+      }
+      .navbar {
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      pre.code {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 8px;
+      }
+      .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+      .rule-badge {
+        background-color: var(--accent);
+        color: var(--dark);
+        font-weight: 500;
+      }
+      .btn-primary {
+        background-color: var(--primary);
+        border-color: var(--primary);
+      }
+      .btn-primary:hover {
+        background-color: var(--secondary);
+        border-color: var(--secondary);
+      }
+      footer {
+        background-color: var(--dark);
+        color: var(--light);
+      }
+      .sticky-top {
+        top: 20px;
+      }
+      .form-demo .form-control.is-invalid {
+        border-color: #dc3545;
+        background-image: none;
+      }
+      .text-primary {
+        color: var(--primary) !important;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+      <div class="container">
+        <a class="navbar-brand" href="#">
+          <i class="bi bi-wind me-2 text-primary"></i>ZephyrValidator
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#features">Features</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#usage">Usage</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#validation-rules">Validation Rules</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#demo">Demo</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="btn btn-primary ms-2"
+                href="https://github.com/sarwaralamini/zephyr-form-validator"
+                target="_blank"
+              >
+                <i class="bi bi-github me-1"></i> GitHub
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header
+      class="hero-gradient py-5 d-flex align-items-center justify-content-center text-center"
+    >
+      <div class="container py-5">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <h1 class="display-4 fw-bold mb-3">ZephyrFormValidator</h1>
+            <p class="lead mb-4">
+              A lightweight, dependency-free JavaScript library for form
+              validation with custom rules, dynamic error handling, and class
+              toggling.
+            </p>
+            <div
+              class="d-flex flex-column flex-sm-row justify-content-center gap-3"
+            >
+              <a href="#usage" class="btn btn-light">Get Started</a>
+              <a
+                href="https://github.com/sarwaralamini/zephyr-form-validator"
+                class="btn btn-outline-light"
+              >
+                <i class="bi bi-download me-1"></i> Download
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Features -->
+    <section id="features" class="py-5">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="fw-bold">Why Choose ZephyrFormValidator?</h2>
+          <p class="lead text-muted">
+            Powerful features that make form validation a breeze
+          </p>
+        </div>
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="card h-100 border-0 p-4">
+              <div class="text-center mb-3">
+                <i class="bi bi-lightning-charge feature-icon"></i>
+              </div>
+              <h3 class="h5 fw-bold mb-3 text-center">Lightweight & Fast</h3>
+              <p class="text-muted">
+                Zero dependencies and minimal footprint for blazing-fast
+                performance. No jQuery required.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 border-0 p-4">
+              <div class="text-center mb-3">
+                <i class="bi bi-gear feature-icon"></i>
+              </div>
+              <h3 class="h5 fw-bold mb-3 text-center">Customizable Rules</h3>
+              <p class="text-muted">
+                Extensive set of built-in validation rules with support for
+                custom error messages.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 border-0 p-4">
+              <div class="text-center mb-3">
+                <i class="bi bi-brush feature-icon"></i>
+              </div>
+              <h3 class="h5 fw-bold mb-3 text-center">Flexible Styling</h3>
+              <p class="text-muted">
+                Custom CSS classes for valid and invalid states to match your
+                design system.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 border-0 p-4">
+              <div class="text-center mb-3">
+                <i class="bi bi-calendar-check feature-icon"></i>
+              </div>
+              <h3 class="h5 fw-bold mb-3 text-center">Date Validation</h3>
+              <p class="text-muted">
+                Powerful date validation with custom format support and real
+                date checking.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 border-0 p-4">
+              <div class="text-center mb-3">
+                <i class="bi bi-code-slash feature-icon"></i>
+              </div>
+              <h3 class="h5 fw-bold mb-3 text-center">Developer Friendly</h3>
+              <p class="text-muted">
+                Clean API, intuitive configuration, and comprehensive
+                documentation make implementation simple.
+              </p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card h-100 border-0 p-4">
+              <div class="text-center mb-3">
+                <i class="bi bi-laptop feature-icon"></i>
+              </div>
+              <h3 class="h5 fw-bold mb-3 text-center">
+                Cross-Browser Compatible
+              </h3>
+              <p class="text-muted">
+                Works seamlessly across all modern browsers with no additional
+                polyfills required.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Usage -->
+    <section id="usage" class="py-5 bg-light">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="fw-bold">Getting Started</h2>
+          <p class="lead text-muted">Quick and easy implementation</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="card border-0 h-100">
+              <div class="card-header bg-dark text-white py-3">
+                <h3 class="h5 mb-0">1. Install ZephyrFormValidator</h3>
+              </div>
+              <div class="card-body">
+                <pre class="code mb-0"><code>// Using npm
+<!-- npm install zephyr-form-validator
+
+// Using CDN
+&lt;script src="https://cdn.example.com/zephyr-form-validator.min.js"&gt;&lt;/script&gt; -->
+
+// Just ownload the script and include it
+&lt;script src="path/to/zephyr-form-validator.min.js"&gt;&lt;/script&gt;</code></pre>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card border-0 h-100">
+              <div class="card-header bg-dark text-white py-3">
+                <h3 class="h5 mb-0">2. Basic Implementation</h3>
+              </div>
+              <div class="card-body">
+                <pre class="code mb-0"><code>// Get the form element
+const form = document.getElementById('myForm');
+
+// Initialize the validator
+const validator = new ZephyrFormValidator(form, {
+  fields: {
+    username: {
+      required: { value: true },
+      min: { value: 3 }
+    },
+    email: {
+      required: { value: true },
+      email: { value: true }
+    }
+  },
+  errorClass: "validation-error",
+  validationClasses: {
+    isInvalid: {
+      input: "is-invalid",
+      error: "invalid-feedback"
+    }
+  }
+});
+
+// Validate on form submission
+form.addEventListener('submit', function(e) {
+  if (!validator.validate()) {
+    e.preventDefault();
+  }
+});</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Validation Rules -->
+    <section id="validation-rules" class="py-5">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="fw-bold">Validation Rules</h2>
+          <p class="lead text-muted">Comprehensive set of validation options</p>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 mb-4">
+            <div class="sticky-top d-none d-lg-block">
+              <div class="list-group">
+                <a
+                  href="#required-rule"
+                  class="list-group-item list-group-item-action"
+                  >Required</a
+                >
+                <a
+                  href="#min-max-rule"
+                  class="list-group-item list-group-item-action"
+                  >Min/Max Length</a
+                >
+                <a
+                  href="#email-rule"
+                  class="list-group-item list-group-item-action"
+                  >Email</a
+                >
+                <a
+                  href="#pattern-rule"
+                  class="list-group-item list-group-item-action"
+                  >Pattern</a
+                >
+                <a
+                  href="#range-rule"
+                  class="list-group-item list-group-item-action"
+                  >Range</a
+                >
+                <a
+                  href="#date-rule"
+                  class="list-group-item list-group-item-action"
+                  >Date</a
+                >
+                <a
+                  href="#equal-rule"
+                  class="list-group-item list-group-item-action"
+                  >Equal To</a
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-9">
+            <div class="card border-0 mb-4" id="required-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">required</span>
+                  <h3 class="h5 mb-0">Required Validation</h3>
+                </div>
+                <p>Ensures that a field contains a value and is not empty.</p>
+                <pre class="code mb-0"><code>username: {
+  required: { 
+    value: true,
+    message: "Username is required" // Optional custom message
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="min-max-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">min/max</span>
+                  <h3 class="h5 mb-0">Minimum/Maximum Length</h3>
+                </div>
+                <p>
+                  Validates the minimum and maximum character length for text
+                  fields.
+                </p>
+                <pre class="code mb-0"><code>password: {
+  min: { 
+    value: 8,
+    message: "Password must be at least 8 characters" // Optional
+  },
+  max: { 
+    value: 20,
+    message: "Password cannot exceed 20 characters" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="email-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">email</span>
+                  <h3 class="h5 mb-0">Email Validation</h3>
+                </div>
+                <p>
+                  Validates that an input contains a properly formatted email
+                  address.
+                </p>
+                <pre class="code mb-0"><code>email: {
+  email: { 
+    value: true,
+    message: "Please enter a valid email address" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="pattern-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">pattern</span>
+                  <h3 class="h5 mb-0">Pattern/RegEx Validation</h3>
+                </div>
+                <p>
+                  Validates input against a custom regular expression pattern.
+                </p>
+                <pre class="code mb-0"><code>phone: {
+  pattern: { 
+    value: "^\\d{3}-\\d{3}-\\d{4}$",
+    message: "Please enter a valid phone number (e.g., 555-123-4567)" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="range-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">range</span>
+                  <h3 class="h5 mb-0">Numeric Range Validation</h3>
+                </div>
+                <p>
+                  Ensures that a numeric input falls within a specific range.
+                </p>
+                <pre class="code mb-0"><code>age: {
+  range: { 
+    min: 18,
+    max: 100,
+    message: "Age must be between 18 and 100" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="date-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">date</span>
+                  <h3 class="h5 mb-0">Date Validation</h3>
+                </div>
+                <p>
+                  Validates dates with custom format support and actual date
+                  validation.
+                </p>
+                <pre class="code mb-0"><code>birthdate: {
+  date: { 
+    format: "YYYY-MM-DD", // Supports YYYY, YY, MM, M, DD, D formats
+    message: "Please enter a valid date in YYYY-MM-DD format" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="equal-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">equalTo</span>
+                  <h3 class="h5 mb-0">Equal To Validation</h3>
+                </div>
+                <p>
+                  Ensures that an input value matches the value of another field
+                  (useful for password confirmation).
+                </p>
+                <pre class="code mb-0"><code>confirmPassword: {
+  equalTo: { 
+    field: "password", // ID or name of the target field
+    message: "Passwords must match" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="py-5 bg-light">
+      <div class="container">
+        <div class="text-center mb-5">
+          <h2 class="fw-bold">Live Demo</h2>
+          <p class="lead text-muted">See ZephyrFormValidator in action</p>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="card border-0 shadow form-demo">
+              <div class="card-body p-4">
+                <form id="demoForm">
+                  <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="username"
+                      name="username"
+                      placeholder="Enter username"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="email"
+                      name="email"
+                      placeholder="Enter email"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="password"
+                      name="password"
+                      placeholder="Enter password"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="confirmPassword" class="form-label"
+                      >Confirm Password</label
+                    >
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      placeholder="Confirm password"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="age" class="form-label">Age</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="age"
+                      name="age"
+                      placeholder="Enter age"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="phone" class="form-label"
+                      >Phone Number (017XXXXXXXX)</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="phone"
+                      name="phone"
+                      placeholder="e.g. 017XXXXXXXX"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="birthdate" class="form-label"
+                      >Birthdate (YYYY-MM-DD)</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="birthdate"
+                      name="birthdate"
+                      placeholder="e.g. 1990-01-31"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+                  <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">
+                      Submit Form
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-5 hero-gradient text-white">
+      <div class="container text-center">
+        <h2 class="fw-bold mb-4">Ready to simplify your form validation?</h2>
+        <p class="lead mb-4">Get started with ZephyrFormValidator today.</p>
+        <div class="d-flex justify-content-center gap-3">
+          <a
+            href="https://github.com/sarwaralamini/zephyr-form-validator"
+            class="btn btn-light"
+          >
+            <i class="bi bi-github me-2"></i>GitHub Repository
+          </a>
+          <a href="#" class="btn btn-outline-light">
+            <i class="bi bi-book me-2"></i>Documentation
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-4">
+      <div class="container">
+        <div class="row align-items-center">
+          <div class="col-md-6 text-center text-md-start">
+            <p class="mb-0">
+              &copy; 2023-2025 ZephyrFormValidator. Created by
+              <a href="https://github.com/sarwaralamini" class="text-light"
+                >Md.Sarwar Alam</a
+              >
+            </p>
+          </div>
+          <div class="col-md-6 text-center text-md-end mt-3 mt-md-0">
+            <a href="#" class="text-light me-3"><i class="bi bi-github"></i></a>
+            <a href="#" class="text-light me-3"
+              ><i class="bi bi-twitter"></i
+            ></a>
+            <a href="#" class="text-light"><i class="bi bi-linkedin"></i></a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ZephyrFormValidator Script -->
+    <script src="ZephyrFormValidator.js"></script>
+    <script>
+      const form = document.getElementById("demoForm");
+
+      const validator = new ZephyrFormValidator(form, {
+        fields: {
+          username: {
+            required: {
+              value: true,
+              message: "The username is required.", //Optional
+            },
+            min: {
+              value: 3,
+            },
+            max: {
+              value: 15,
+            },
+          },
+          email: {
+            required: {
+              value: true,
+            },
+            email: {
+              value: true,
+            },
+          },
+          password: {
+            required: {
+              value: true,
+            },
+            min: {
+              value: 8,
+            },
+            pattern: {
+              value: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^\\w\\s]).+$",
+              message:
+                "Password must include uppercase, lowercase, number, and special character.",
+            },
+          },
+          confirmPassword: {
+            required: {
+              value: true,
+              message: "Please confirm your password.",
+            },
+            equalTo: {
+              field: "password",
+            },
+          },
+          age: {
+            required: {
+              value: true,
+            },
+            range: {
+              min: 18,
+              max: 60,
+            },
+          },
+          phone: {
+            required: {
+              value: true,
+            },
+            pattern: {
+              value: "^01[3-9]\\d{8}$",
+              message:
+                "Phone number must be a valid Bangladeshi number (e.g., 017XXXXXXXX).",
+            },
+          },
+          birthdate: {
+            required: { value: true, message: "Birthdate is required." },
+            date: {
+              format: "YYYY-MM-DD",
+              message: "Please enter a valid date in YYYY-MM-DD format.",
+            },
+          },
+        },
+        validationClasses: {
+          isInvalid: {
+            input: "is-invalid",
+            error: "invalid-feedback",
+          },
+        },
+      });
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        validator.clearErrors();
+        const isValid = validator.validate();
+        if (isValid) {
+          alert("All validations passed!");
+          form.reset();
+        }
+      });
+    </script>
+  </body>
+</html>
