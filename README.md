@@ -1,4 +1,4 @@
-# [Try ZephyrFormValidator Form Validation Library](https://sarwaralamini.github.io/Zephyr-form-validator)
+# [Try ZephyrFormValidator Form Validation Library](https://sarwaralamini.github.io/zephyr-form-validator)
 
 # ZephyrFormValidator
 
