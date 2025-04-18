@@ -24,13 +24,13 @@ class ZephyrFormValidator {
     this.errors = {};
     this.defaultMessages = {
       required: "The {field} field is required.",
-      min: "Minimum {min} characters are required.",
-      max: "Maximum {max} characters are allowed.",
+      min: "{field} must be at least {min} characters long.",
+      max: "{field} must not exceed {max} characters.",
       email: "Please enter a valid email address.",
       pattern: "The {field} format is invalid.",
       range: "The value must be between {min} and {max}.",
       date: "Please enter a valid date in the format {format}.",
-      equalTo: "This field must match the {targetField} field.",
+      equalTo: "{field} field must match the {targetField} field.",
     };
 
     // Cache regex patterns
@@ -44,14 +44,12 @@ class ZephyrFormValidator {
     };
     this.emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    // Bind event listeners if form is provided
     if (form) {
       this.bindEvents();
     }
   }
 
   bindEvents() {
-    // Optional: Add real-time validation on input/change events
     this.form.addEventListener("submit", (e) => {
       if (!this.validate()) {
         e.preventDefault();
@@ -61,7 +59,7 @@ class ZephyrFormValidator {
 
   validate() {
     this.errors = {};
-    this.clearErrors(); // Clear all errors before validating
+    this.clearErrors();
 
     const inputs = Array.from(
       this.form.querySelectorAll("input, textarea, select")
@@ -81,27 +79,23 @@ class ZephyrFormValidator {
 
   validateField(input, rules) {
     if (!rules) return true;
-
+  
     const value = input.value.trim();
     const fieldName = input.name || input.id;
-
-    // Check all rules sequentially and break on first error
+  
     if (this.runValidations(input, value, fieldName, rules)) {
       return false; // Validation failed
     }
-
-    // No errors found
+  
     this.clearError(input);
     this.removeInvalidClasses(input);
-
-    // Add valid classes if specified
+  
     this.addValidClasses(input);
-
+  
     return true;
   }
 
   runValidations(input, value, fieldName, rules) {
-    // Return true if any validation fails (short-circuit)
     return (
       this.checkRequired(input, value, fieldName, rules) ||
       this.checkMin(input, value, rules) ||
@@ -127,9 +121,13 @@ class ZephyrFormValidator {
 
   checkMin(input, value, rules) {
     if (rules.min && value.length < rules.min.value) {
+      const fieldName = input.name || input.id;
       const message =
         rules.min.message ||
-        this.formatMessage(this.defaultMessages.min, { min: rules.min.value });
+        this.formatMessage(this.defaultMessages.min, { 
+          field: fieldName,
+          min: rules.min.value 
+        });
       this.addError(input, message);
       return true;
     }
@@ -138,9 +136,13 @@ class ZephyrFormValidator {
 
   checkMax(input, value, rules) {
     if (rules.max && value.length > rules.max.value) {
+      const fieldName = input.name || input.id;
       const message =
         rules.max.message ||
-        this.formatMessage(this.defaultMessages.max, { max: rules.max.value });
+        this.formatMessage(this.defaultMessages.max, { 
+          field: fieldName,
+          max: rules.max.value 
+        });
       this.addError(input, message);
       return true;
     }
@@ -204,24 +206,18 @@ class ZephyrFormValidator {
 
   checkEqualTo(input, value, rules) {
     if (rules.equalTo && value) {
+      const fieldName = input.name || input.id;
       const targetFieldName = rules.equalTo.field;
       const targetField = this.form.querySelector(
         `[name="${targetFieldName}"], #${targetFieldName}`
       );
-
+      
       if (targetField && value !== targetField.value) {
         let targetDisplayName = targetFieldName;
-        const targetLabel = this.form.querySelector(
-          `label[for="${targetFieldName}"]`
-        );
-
-        if (targetLabel) {
-          targetDisplayName = targetLabel.textContent.trim();
-        }
-
         const message =
           rules.equalTo.message ||
           this.formatMessage(this.defaultMessages.equalTo, {
+            field: fieldName,
             targetField: targetDisplayName,
           });
         this.addError(input, message);
@@ -232,14 +228,41 @@ class ZephyrFormValidator {
   }
 
   formatMessage(template, values) {
-    return Object.entries(values).reduce(
-      (message, [key, value]) => message.replace(`{${key}}`, value),
-      template
-    );
+    let message = template;
+    
+    Object.entries(values).forEach(([key, value]) => {
+      if (key === 'field' || key === 'targetField') {
+        let formattedValue = value;
+        
+        if (/^[A-Z]/.test(value) || /[a-z][A-Z]/.test(value)) {
+          formattedValue = value
+            .replace(/([A-Z])/g, ' $1')
+            .trim();
+        }
+        
+        formattedValue = formattedValue.replace(/_/g, ' ');
+        
+        const isStartOfMessage = template.indexOf(`{${key}}`) === 0;
+        if (isStartOfMessage) {
+          formattedValue = formattedValue.charAt(0).toUpperCase() + formattedValue.slice(1).toLowerCase();
+        } else {
+          formattedValue = formattedValue.toLowerCase();
+        }
+        
+        message = message.replace(`{${key}}`, formattedValue);
+      }
+    });
+    
+    Object.entries(values).forEach(([key, value]) => {
+      if (key !== 'field' && key !== 'targetField') {
+        message = message.replace(`{${key}}`, value);
+      }
+    });
+    
+    return message;
   }
 
   isValidDate(value, format) {
-    // Create regex based on format
     let regexStr = format.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     for (const [key, pattern] of Object.entries(this.datePatterns)) {
       regexStr = regexStr.replace(new RegExp(key, "g"), `(${pattern})`);
@@ -248,7 +271,6 @@ class ZephyrFormValidator {
     const regex = new RegExp(`^${regexStr}$`);
     if (!regex.test(value)) return false;
 
-    // Extract date components
     let year, month, day;
     const formatParts = format.match(/(YYYY|YY|MM|M|DD|D)/g) || [];
     const valueParts = value.match(/\d+/g) || [];
@@ -264,7 +286,7 @@ class ZephyrFormValidator {
       } else if (part === "YY") {
         year = 2000 + val;
       } else if (part === "MM" || part === "M") {
-        month = val - 1; // JS months are 0-indexed
+        month = val - 1;
       } else if (part === "DD" || part === "D") {
         day = val;
       }
@@ -297,12 +319,10 @@ class ZephyrFormValidator {
     errorElement.className = errorClass;
     errorElement.innerText = message;
 
-    // Use data attribute to mark error elements for easier cleanup
     errorElement.dataset.zephyrError = true;
 
     input.parentNode.insertBefore(errorElement, input.nextSibling);
 
-    // Add invalid classes to input
     const invalidInputClass = this.options.validationClasses.isInvalid?.input;
     if (invalidInputClass) {
       invalidInputClass.split(" ").forEach((cls) => input.classList.add(cls));
@@ -316,16 +336,37 @@ class ZephyrFormValidator {
   }
 
   addValidClasses(input) {
-    const validInputClass = this.options.validationClasses.isValid?.input;
-    if (validInputClass) {
-      validInputClass.split(" ").forEach((cls) => input.classList.add(cls));
+    const validClasses = this.options.validationClasses.isValid;
+    
+    if (validClasses) {
+      
+      if (validClasses.input) {
+        validClasses.input.split(" ").forEach(cls => input.classList.add(cls));
+      }
+      
+      if (validClasses.error) {
+        const validElement = document.createElement("span");
+        validElement.className = validClasses.error;
+        validElement.dataset.zephyrValid = true;
+        
+        const existingFeedback = input.parentNode.querySelector("[data-zephyr-valid]");
+        if (existingFeedback) existingFeedback.remove();
+        
+        input.parentNode.insertBefore(validElement, input.nextSibling);
+      }
     }
   }
 
   removeValidClasses(input) {
-    const validInputClass = this.options.validationClasses.isValid?.input;
-    if (validInputClass) {
-      validInputClass.split(" ").forEach((cls) => input.classList.remove(cls));
+    const validClasses = this.options.validationClasses?.isValid?.input;
+    if (validClasses) {
+      validClasses.split(" ").forEach(cls => input.classList.remove(cls));
+    }
+    
+    if (this.options.validationClasses?.isValid?.error) {
+      const parent = input.parentNode;
+      const validElements = parent.querySelectorAll("[data-zephyr-valid]");
+      validElements.forEach(el => el.remove());
     }
   }
 
@@ -341,12 +382,16 @@ class ZephyrFormValidator {
   clearError(input) {
     const errorClass = this.getErrorClass();
     const parent = input.parentNode;
-
-    // Look for error elements by data attribute or class
+  
     const errorElements = parent.querySelectorAll(
       `[data-zephyr-error], .${errorClass}`
     );
     errorElements.forEach((el) => el.remove());
+    
+    if (this.options.validationClasses.isValid?.error) {
+      const validElements = parent.querySelectorAll("[data-zephyr-valid]");
+      validElements.forEach((el) => el.remove());
+    }
   }
 
   clearErrors() {
@@ -355,8 +400,12 @@ class ZephyrFormValidator {
       `[data-zephyr-error], .${errorClass}`
     );
     errorElements.forEach((el) => el.remove());
-
-    // Also clear all classes from inputs
+    
+    if (this.options.validationClasses.isValid?.error) {
+      const validElements = this.form.querySelectorAll("[data-zephyr-valid]");
+      validElements.forEach((el) => el.remove());
+    }
+  
     const inputs = this.form.querySelectorAll("input, textarea, select");
     inputs.forEach((input) => {
       this.removeInvalidClasses(input);
@@ -365,7 +414,7 @@ class ZephyrFormValidator {
   }
 
   getErrors() {
-    return { ...this.errors }; // Return a copy
+    return { ...this.errors };
   }
 
   reset() {
