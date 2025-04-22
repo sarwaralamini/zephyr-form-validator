@@ -340,6 +340,21 @@ form.addEventListener('submit', function(e) {
                   >Email</a
                 >
                 <a
+                  href="#url-rule"
+                  class="list-group-item list-group-item-action"
+                  >URL</a
+                >
+                <a
+                  href="#alpha-rule"
+                  class="list-group-item list-group-item-action"
+                  >Alpha</a
+                >
+                <a
+                  href="#alphanumeric-rule"
+                  class="list-group-item list-group-item-action"
+                  >Alpha Numeric</a
+                >
+                <a
                   href="#pattern-rule"
                   class="list-group-item list-group-item-action"
                   >Pattern</a
@@ -386,7 +401,7 @@ form.addEventListener('submit', function(e) {
                   <h3 class="h5 mb-0">Minimum/Maximum Length</h3>
                 </div>
                 <p>
-                  Validates the minimum and maximum character length for text
+                  Validates the minimum and maximum character length for input
                   fields.
                 </p>
                 <pre class="code mb-0"><code>password: {
@@ -416,6 +431,61 @@ form.addEventListener('submit', function(e) {
   email: { 
     value: true,
     message: "Please enter a valid email address" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="url-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">url</span>
+                  <h3 class="h5 mb-0">URL Validation</h3>
+                </div>
+                <p>
+                  Validates that an input contains a properly formatted URL (http://, https://, www, etc.).
+                </p>
+                <pre class="code mb-0"><code>website: {
+  url: { 
+    value: true,
+    pattern: /^(https?:\/\/|www\.)[a-zA-Z0-9-]+\.[a-zA-Z]{2,6}(\/[^\s]*)?$/, // Optional
+    message: "Please enter a valid URL" // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+            
+            <div class="card border-0 mb-4" id="alpha-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">alpha</span>
+                  <h3 class="h5 mb-0">Alpha Validation</h3>
+                </div>
+                <p>
+                  Ensures the input contains only alphabetic characters.
+                </p>
+                <pre class="code mb-0"><code>username: {
+  alpha: { 
+    value: true,
+    message: "Username must contain only letters." // Optional
+  }
+}</code></pre>
+              </div>
+            </div>
+
+            <div class="card border-0 mb-4" id="alphanumeric-rule">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <span class="badge rule-badge me-2">alphanumeric</span>
+                  <h3 class="h5 mb-0">Alpha Numeric  Validation</h3>
+                </div>
+                <p>
+                  Verifies the input contains only letters and numbers.
+                </p>
+                <pre class="code mb-0"><code>username: {
+  alphanumeric: { 
+    value: true,
+    message: "Username must contain only letters and numbers." // Optional
   }
 }</code></pre>
               </div>
@@ -513,6 +583,18 @@ form.addEventListener('submit', function(e) {
               <div class="card-body p-4">
                 <form id="demoForm">
                   <div class="mb-3">
+                    <label for="name" class="form-label">Your Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="name"
+                      name="name"
+                      placeholder="Enter your name"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
+
+                  <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input
                       type="text"
@@ -595,6 +677,19 @@ form.addEventListener('submit', function(e) {
                     />
                     <div class="invalid-feedback"></div>
                   </div>
+                  <div class="mb-3">
+                    <label for="birthdate" class="form-label"
+                      >Website</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="website"
+                      name="website"
+                      placeholder="www.yoursite.com"
+                    />
+                    <div class="invalid-feedback"></div>
+                  </div>
                   <div class="d-grid">
                     <button type="submit" class="btn btn-primary">
                       Submit Form
@@ -660,10 +755,21 @@ form.addEventListener('submit', function(e) {
 
       const validator = new ZephyrFormValidator(form, {
         fields: {
+          name: {
+            required: {
+              value: true
+            },
+            alphanumeric: { 
+              value: true
+            }
+          },
           username: {
             required: {
               value: true,
               message: "The username is required.", //Optional
+            },
+            alpha: { 
+              value: true
             },
             min: {
               value: 3,
@@ -727,6 +833,12 @@ form.addEventListener('submit', function(e) {
               format: "YYYY-MM-DD",
               message: "Please enter a valid date in YYYY-MM-DD format.",
             },
+          },
+          website: {
+            required: { value: true },
+            url: { 
+              value: true
+            }
           },
         },
         validationClasses: {

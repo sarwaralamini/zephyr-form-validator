@@ -27,6 +27,9 @@ class ZephyrFormValidator {
       min: "{field} must be at least {min} characters long.",
       max: "{field} must not exceed {max} characters.",
       email: "Please enter a valid email address.",
+      url: "Please enter a valid URL for the {field} field.",
+      alpha: "The {field} field should only contain alphabetic characters.",
+      alphanumeric: "The {field} field should only contain letters and numbers.",
       pattern: "The {field} format is invalid.",
       range: "The value must be between {min} and {max}.",
       date: "Please enter a valid date in the format {format}.",
@@ -43,6 +46,7 @@ class ZephyrFormValidator {
       D: "([1-9]|[12]\\d|3[01])",
     };
     this.emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    this.urlPattern = /^(https?:\/\/|www\.)[a-zA-Z0-9-]+\.[a-zA-Z]{2,10}(\/[^\s]*)?$/;
 
     if (form) {
       this.bindEvents();
@@ -101,6 +105,9 @@ class ZephyrFormValidator {
       this.checkMin(input, value, rules) ||
       this.checkMax(input, value, rules) ||
       this.checkEmail(input, value, rules) ||
+      this.checkUrl(input, value, rules) ||
+      this.checkAlpha(input, value, rules) ||
+      this.checkAlphanumeric(input, value, rules) ||
       this.checkPattern(input, value, fieldName, rules) ||
       this.checkRange(input, value, rules) ||
       this.checkDate(input, value, rules) ||
@@ -157,6 +164,45 @@ class ZephyrFormValidator {
     return false;
   }
 
+  checkUrl(input, value, rules) {
+    if (rules.url?.value) {
+      const urlPattern = rules.url.pattern || this.urlPattern; // Use the user-provided pattern or the default one
+      if (value && !urlPattern.test(value)) {
+        const fieldName = input.name || input.id;
+        const message =
+          rules.url.message ||
+          this.formatMessage(this.defaultMessages.url, { field: fieldName });
+        this.addError(input, message);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  checkAlpha(input, value, rules) {
+    if (rules.alpha?.value && value && !/^[A-Za-z]+$/.test(value)) {
+      const fieldName = input.name || input.id;
+      const message =
+        rules.alpha.message ||
+        this.formatMessage(this.defaultMessages.alpha, { field: fieldName });
+      this.addError(input, message);
+      return true;
+    }
+    return false;
+  }
+
+  checkAlphanumeric(input, value, rules) {
+    if (rules.alphanumeric?.value && value && !/^[A-Za-z0-9]+$/.test(value)) {
+      const fieldName = input.name || input.id;
+      const message =
+        rules.alphanumeric.message ||
+        this.formatMessage(this.defaultMessages.alphanumeric, { field: fieldName });
+      this.addError(input, message);
+      return true;
+    }
+    return false;
+  }  
+  
   checkPattern(input, value, fieldName, rules) {
     if (rules.pattern && value) {
       const pattern = new RegExp(rules.pattern.value);
